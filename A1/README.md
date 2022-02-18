@@ -25,3 +25,9 @@ The device has a accelerometer detecting sitting to standing movements, which ke
 
 ### Test - IMU & LED / Screen Feedback Device
 
+
+https://user-images.githubusercontent.com/37056925/154743757-f4a42400-125d-4744-a43e-52d72bade187.mp4
+
+
+https://user-images.githubusercontent.com/37056925/154743764-fa9acede-ac85-498e-b015-f871a4106215.mp4
+
