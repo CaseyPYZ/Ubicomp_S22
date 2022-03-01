@@ -31,3 +31,21 @@ https://user-images.githubusercontent.com/37056925/154743757-f4a42400-125d-4744-
 
 https://user-images.githubusercontent.com/37056925/154743764-fa9acede-ac85-498e-b015-f871a4106215.mp4
 
+
+<br>
+
+## Week 2
+
+### Function demo of step counter
+
+> * Your screen should function as: once a step is detected, the screen displays the total number of steps. For example, when you just start to wear the device, the screen should display “0 steps”. Once you make a step, the screen should display “1 step”. 
+> * There are five LEDs on the Opla. These LEDs should function as, when you turn left, the LEDs on the left side should blink. When you turn right, the LEDs on the right side should blink. 
+> * Integrate another type of feedback device. 
+
+### A screen recording of the steps being counted on the Arduino serial monitor
+
+
+### Arduino code
+
+
+### A short write up
