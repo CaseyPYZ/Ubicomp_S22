@@ -18,7 +18,8 @@ const uint32_t COLOR_GREEN = carrier.leds.Color(255, 0, 0);
 const uint32_t COLOR_BLUE = carrier.leds.Color(0, 0, 255);
 const uint32_t NO_COLOR = carrier.leds.Color(0, 0, 0);
 
-const float threshold = 0.10;
+const float THRES_ACC = 0.10;
+const int THRES_GY = 100;
 const int RIGHT_LED = 1;
 const int LEFT_LED = 3;
 
@@ -69,7 +70,7 @@ void calibrate() {
  * Turning tones
  */
 void play_melody(char dir){
-  int note_duration = 100;
+  int note_duration = 150;
 
   if (dir == 'R'){
     for (int note = 0; note < 3; note++){
@@ -104,7 +105,7 @@ void setup() {
 
 
 void loop() {
-  float x, y, z;
+  float ax, ay, az;
   float gx, gy, gz;
 
   float totvect[100] = {0};
@@ -115,13 +116,17 @@ void loop() {
   
   for (int a = 0; a < 100; a++){
     carrier.IMUmodule.readGyroscope(gx, gy, gz);
-    carrier.IMUmodule.readAcceleration(x, y, z);
-    xaccl[a] = x;
-    delay(1);
-    yaccl[a] = y;
-    delay(1);
-    zaccl[a] = z;
-    delay(1);
+    carrier.IMUmodule.readAcceleration(ax, ay, az);
+    xaccl[a] = ax;
+    yaccl[a] = ay;
+    zaccl[a] = az;
+        
+    Serial.print("ax ");
+    Serial.print(ax);
+    Serial.print(" ay ");
+    Serial.print(ay);
+    Serial.print(" az ");
+    Serial.println(az);
     
     /* 
      * Get the total acceleration vector by taking the square root of X, Y, and Z-axis values
@@ -129,29 +134,24 @@ void loop() {
      */
     totvect[a] = sqrt(((xaccl[a] - xavg) * (xaccl[a] - xavg)) + ((yaccl[a] - yavg) * (yaccl[a] - yavg)) + ((zval[a] - zavg) * (zval[a] - zavg)));
     totave[a] = (totvect[a] + totvect[a - 1]) / 2 ;
-    // Serial.print("totave[a]\t");
-    // Serial.println(totave[a]);
-    Serial.print("gx ");
-    Serial.print(gx);
-    Serial.print(" gy ");
-    Serial.print(gy);
-    Serial.print(" gz ");
-    Serial.println(gz);
+    Serial.print("totave[a]\t");
+    Serial.println(totave[a]);
+
     
     // Check if update step according to threshold
     // If acceleration vector greater than the threshold & flag is down, increase the step count and raise the flag
-    if (totave[a] > threshold && flag == 0){
+    if (totave[a] > THRES_ACC && flag == 0){
       steps = steps + 1;
       flag = 1;
     }
     // If less than the threshold & flag is up, increase the step count and raise the flag
-    if (totave[a] < threshold   && flag == 1) {
+    if (totave[a] < THRES_ACC && flag == 1) {
       flag = 0;
     }
     
     // Check if turning
     // LEFT
-    if (gy > 100){
+    if (gy > THRES_GY){
       carrier.leds.setPixelColor(LEFT_LED, COLOR_BLUE);
       carrier.leds.show();
       carrier.display.setCursor(80, 130);
@@ -164,7 +164,7 @@ void loop() {
       carrier.leds.show();
     } 
     // RIGHT
-    else if (gy < -100) {
+    else if (gy < -THRES_GY) {
       carrier.leds.setPixelColor(RIGHT_LED, COLOR_BLUE);
       carrier.leds.show();
       carrier.display.setCursor(80, 130);
