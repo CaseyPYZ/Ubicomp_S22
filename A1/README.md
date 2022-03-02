@@ -90,7 +90,10 @@ When a *RIGHT* turn is detected, the LED on the right blinks, and the board buzz
 
 ![Micro-usb power port disconnected](./A1_c2_glitch.jpeg)
 
-While building the wearable prototype onto a belt, I accidentally dropped the board. It hit the floor and then became not responsive to power supply. After a quick check I found out that the metal pin connecting the micro-usb port to the board got disconnected, and that when they are pinched back together the power supply went through again.
+While building the wearable prototype onto a belt, I accidentally dropped the board. It hit the floor and then became not responsive to power supply. After a quick check I found out that the metal pin connecting the micro-usb port to the board got disconnected, as shown in the red circle, and that when they are pinched back together the power supply went through again.
+
+https://user-images.githubusercontent.com/37056925/156286384-a9062bc6-1bc2-46af-9b7b-4e01dfddda8e.mp4
+
 
 I'll need to find out what's the best way to fix this without (further) hurting the board.
 
