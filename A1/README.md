@@ -84,6 +84,16 @@ Gyroscope data is used to detect turning. With some testing, I found out that th
 
 When a *RIGHT* turn is detected, the LED on the right blinks, and the board buzzer plays the melody "DO RE MI". Similarly when a *LEFT* turn is detected, the LED on the left blinks and the board buzzer plays a "MI RE DO" melody. The notes are specified in the `pitches.h` header file.
 
+<br>
+
+### A little accident
+
+![Micro-usb power port disconnected](./A1_c2_glitch.jpeg)
+
+While building the wearable prototype onto a belt, I accidentally dropped the board. It hit the floor and then became not responsive to power supply. After a quick check I found out that the metal pin connecting the micro-usb port to the board got disconnected, and that when they are pinched back together the power supply went through again.
+
+I'll need to find out what's the best way to fix this without (further) hurting the board.
+
 
 ### References
 
