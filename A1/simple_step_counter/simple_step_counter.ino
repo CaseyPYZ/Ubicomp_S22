@@ -132,7 +132,7 @@ void loop() {
      * Get the total acceleration vector by taking the square root of X, Y, and Z-axis values
      * then calculate the average of the maximum and minimum acceleration vector values
      */
-    totvect[a] = sqrt(((xaccl[a] - xavg) * (xaccl[a] - xavg)) + ((yaccl[a] - yavg) * (yaccl[a] - yavg)) + ((zval[a] - zavg) * (zval[a] - zavg)));
+    totvect[a] = sqrt(((xaccl[a] - xavg) * (xaccl[a] - xavg)) + ((yaccl[a] - yavg) * (yaccl[a] - yavg)) + ((zaccl[a] - zavg) * (zaccl[a] - zavg)));
     totave[a] = (totvect[a] + totvect[a - 1]) / 2 ;
     Serial.print("totave[a]\t");
     Serial.println(totave[a]);
