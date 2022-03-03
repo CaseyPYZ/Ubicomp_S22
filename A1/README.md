@@ -54,6 +54,9 @@ https://user-images.githubusercontent.com/37056925/156268892-28ebf381-d111-47fb-
 
 #### **Wearable Demo**
 
+https://user-images.githubusercontent.com/37056925/156490803-7ceb8389-a8a3-4c5e-ae3b-e824b7122428.mp4
+
+
 
 ### A screen recording of the steps being counted on the Arduino serial monitor
 
