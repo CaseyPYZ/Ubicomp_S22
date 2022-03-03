@@ -7,6 +7,7 @@
 
 #include <Arduino_MKRIoTCarrier.h>
 #include "visuals.h"
+#include "pitches.h"
 
 MKRIoTCarrier carrier;
 
@@ -18,8 +19,15 @@ const uint32_t COLOR_BLUE = carrier.leds.Color(0, 0, 255);
 const uint32_t NO_COLOR = carrier.leds.Color(0, 0, 0);
   
 const float threshold = 0.10;
+const int THRES_GY = 100;
 const int RIGHT_LED = 1;
 const int LEFT_LED = 3;
+
+// do re mi
+int melody[] = {
+  NOTE_C4, NOTE_D4, NOTE_E4
+};
+
 
 /*
  * Store Accelerometer & Gyroscope values
@@ -62,7 +70,9 @@ void loop() {
 
 
 void get_step_turn_update(){
-  
+  /*
+   * Collect 100 samples
+   */
   for (int a = 0; a < 100; a++){
     carrier.IMUmodule.readAcceleration(ax, ay, az);
     carrier.IMUmodule.readGyroscope(gx, gy, gz);
@@ -98,32 +108,28 @@ void get_step_turn_update(){
     
     // Check if turning
     // LEFT
-    if (gy > 100){
+    if (gy > THRES_GY){
       carrier.leds.setPixelColor(LEFT_LED, COLOR_BLUE);
       carrier.leds.show();
-      carrier.Buzzer.sound(262);
-
-      carrier.display.setCursor(30, 130);
+      carrier.display.setCursor(80, 130);
       carrier.display.setTextSize(3);
       carrier.display.print("<<<");
 
-      delay(300);
-      carrier.Buzzer.noSound();
+      play_melody('L');
+      
       carrier.leds.setPixelColor(LEFT_LED, NO_COLOR);
       carrier.leds.show();
     } 
     // RIGHT
-    else if (gy < -100) {
+    else if (gy < -THRES_GY) {
       carrier.leds.setPixelColor(RIGHT_LED, COLOR_BLUE);
       carrier.leds.show();
-      carrier.Buzzer.sound(294);
-
       carrier.display.setCursor(80, 130);
       carrier.display.setTextSize(3);
       carrier.display.print(">>>");
 
-      delay(200);
-      carrier.Buzzer.noSound();
+      play_melody('R');
+
       carrier.leds.setPixelColor(RIGHT_LED, NO_COLOR);
       carrier.leds.show();
     }
@@ -180,4 +186,25 @@ void calibrate() {
   Serial.print(ax_avg + '\t');
   Serial.print(ay_avg + '\t');
   Serial.println(az_avg);
+}
+
+/*
+ * Play a melody
+ */
+void play_melody(char dir){
+  int note_duration = 150;
+
+  if (dir == 'R'){
+    for (int note = 0; note < 3; note++){
+      carrier.Buzzer.sound(melody[note]);
+      delay(note_duration);
+      carrier.Buzzer.noSound();
+    }
+  } else {
+    for (int note = 2; note > -1; note--){
+      carrier.Buzzer.sound(melody[note]);
+      delay(note_duration);
+      carrier.Buzzer.noSound();
+    }
+  }
 }
