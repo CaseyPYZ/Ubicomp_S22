@@ -140,6 +140,8 @@ As stated before, this project is a wearable belt charm designed to tell people 
 
 #### **Design Update**
 
+![Updated Schematics](./img/A1_schematics_updated.png)
+
 I made a few updates to the original design of the device. A major update would be changing the vibrating motor to LED lights. This is mainly because I want the device to have a "silent alarm" that would be more compatible with a newly added "dark mode" design. Judging from real life experiences, when you're working alone at night in a quite environment, a sudden alarm sound can be quite scary. We don't want the users to have any near-heart attack experiences, so a silent alarm had to be in place.
 
 The light sensor would read in ambient light to determin if the user is in a dark or bright environment. When it's bright, the feedback media is the usual light + sound combination. When it's dark, dark mode is automatically activated, and we use light as the only feedback medium. 
