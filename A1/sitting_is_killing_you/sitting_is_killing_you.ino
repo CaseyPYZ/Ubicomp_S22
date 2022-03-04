@@ -56,7 +56,7 @@ float zaccl[100] = {0};
  * Light value
  */
 int _, light;
-int THRES_LIGHT = 10;
+int THRES_LIGHT = 30;
 bool dark_mode = false;
 
 /*
@@ -199,7 +199,7 @@ void get_accl_update(){
       totvect[a] = sqrt(((xaccl[a] - ax_avg) * (xaccl[a] - ax_avg)) + ((yaccl[a] - ay_avg) * (yaccl[a] - ay_avg)) + ((zaccl[a] - az_avg) * (zaccl[a] - az_avg)));
       totave[a] = (totvect[a] + totvect[a - 1]) / 2 ;
       // Serial.print("totave[a]\t");
-      // Serial.println(totave[a]);
+      Serial.println(totave[a]);
       
       // Check if update step according to threshold
       // If acceleration vector greater than the threshold & flag is down, increase the step count and raise the flag
