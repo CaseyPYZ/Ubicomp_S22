@@ -82,13 +82,13 @@ This simple step counter collects data from the accelerometer and gyroscope in i
 
 After getting the 3-axis values, calculate the total **acceleration vector** by taking the square root of the sum of X, Y, and Z-axis's squared value minus the axis's average value. 
 
-$\sqrt{ (x_{acc} - x_{avg})^2 + (y_{acc} - y_{avg})^2 + (z_{acc} - z_{avg})^2}$
+![The acceleration vector formula](./img/acc_vector.png)
 
 This acceleration vector reflects the board's movement. When the board movement is idle, the vector's value is below 0.1, thus I set the threshold of step detection to be **0.1**. Whenever the vector value is above 0.1, a step is detected and the total step count is incremented by 1.
 
 #### **Gyroscope >>> Turning**
 
-Gyroscope data is used to detect turning. With some testing, I found out that the Y-axis value from the gyroscope reflects turning movements horizontal to the ground. *(This is due to the fact that the Opla board is held up vertical to the ground in this design.)* Thus, the Y-axis value is used to detect turning. The threshold value in this case is set to **100** and **-100** in this case.
+Gyroscope data is used to detect turning. With some testing, I found out that the Y-axis value from the gyroscope reflects turning movements horizontal to the ground. *(This is due to the fact that the Oplà board is held up vertical to the ground in this design.)* Thus, the Y-axis value is used to detect turning. The threshold value in this case is set to **100** and **-100** in this case.
 
 When a *RIGHT* turn is detected, the LED on the right blinks, and the board buzzer plays the melody "DO RE MI". Similarly when a *LEFT* turn is detected, the LED on the left blinks and the board buzzer plays a "MI RE DO" melody. The notes are specified in the `pitches.h` header file.
 
@@ -96,7 +96,9 @@ When a *RIGHT* turn is detected, the LED on the right blinks, and the board buzz
 
 ### A little accident
 
-![Micro-usb power port disconnected](./img/A1_c2_glitch.jpeg)
+<!-- ![Micro-usb power port disconnected](./img/A1_c2_glitch.jpeg) -->
+
+<img src="./img/A1_c2_glitch.jpeg" alt="Micro-usb power port disconnected" width="800"/>
 
 While building the wearable prototype onto a belt, I accidentally dropped the board. It hit the floor and then became not responsive to power supply. After a quick check I found out that the metal pin connecting the micro-usb port to the board got disconnected, as shown in the red circle, and that when they are pinched back together the power supply went through again.
 
@@ -104,11 +106,6 @@ https://user-images.githubusercontent.com/37056925/156286384-a9062bc6-1bc2-46af-
 
 
 I'll need to find out what's the best way to fix this without (further) hurting the board.
-
-
-### References
-
-* Acceleration detection code used in this project is inspired by [this blog post](https://circuitdigest.com/microcontroller-projects/diy-arduino-pedometer-counting-steps-using-arduino-and-accelerometer) by Ashish Choudhary.
 
 
 <br>
@@ -127,8 +124,78 @@ https://user-images.githubusercontent.com/37056925/156705747-56f23339-ec4d-488f-
 https://user-images.githubusercontent.com/37056925/156705759-9145530c-cee0-4f00-b340-3dd8da480818.mp4
 
 
+### Collected Data
+
+Collected serial [accelerometer data](./sitting_is_killing_you/sitting_alarm_data.csv) with pyserial library.
+
+
 ### Arduino Code
 
 Arduino code updated in [this directory](./sitting_is_killing_you/).
 
+
 ### Written Report
+
+As stated before, this project is a wearable belt charm designed to tell people to stand up and move around once in a while, because sitting is killing you. The final product came out as a "wearable" alarm that reads in body movements and environment light ambient, and uses light + sound as the feedback media.
+
+#### **Hardware**
+
+Hardware-wise, I used the Arduino Oplà board as the minicontroller. The built-in IMU, light sensor and touch sensors in its IoT carrier saved a lot of wiring hazzle in the hardware process.
+
+Something worth noticing is that this project gave me a clearer idea of the importance to calibrate positional sensors when the device is activated. This helps positional sensors to read in data that are consistent with the thresholds set in the program.
+
+#### **Software**
+
+**Code Structure**
+
+```arduino
+void setup() {
+    /*
+     * Set up serial;
+     * Set up carrier;
+     * Initialize carrier display;
+     * Calibrate accelerometer;
+     * Initialize timer & flags;
+     * ...
+     */
+}
+
+
+void loop() {
+    // Update step and turning detection
+    get_accl_update();
+    get_timer_update();
+    get_light_update();  
+
+    ...
+    
+    // Update feedbacks
+    if (should_move && !is_moving){
+        /*
+        * Change display text;
+        * Trigger light alarm;
+        * If is not dark mode -> trigger sound;
+        * ...
+        */
+    } else {
+        ...
+    }
+    ...
+}
+```
+
+**Accelerometer >>> Movement**
+
+Similar to the step counter, I used the accelerometer to caputure movements from the user, in order to determine whether the user is sitting or standing. 
+
+**Movement** in this case is still numerialized by calculating the magical **acceleration vector** by taking the square root of the sum of X, Y, and Z-axis's squared value minus the axis's average value. 
+
+![The acceleration vector formula](./img/acc_vector.png)
+
+Although, I did fix a bug from previous checkpoints in the computation process, that led to much more reasonable vector value ranges. After the bug fix, the final threshold of movement detection is set t be **1.0**.
+
+
+
+### References
+
+* Acceleration detection code used in this project is inspired by [this blog post](https://circuitdigest.com/microcontroller-projects/diy-arduino-pedometer-counting-steps-using-arduino-and-accelerometer) by Ashish Choudhary.
