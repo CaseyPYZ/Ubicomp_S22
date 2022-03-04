@@ -15,23 +15,28 @@ MKRIoTCarrier carrier;
 /*
  * Global variables
  */
-const uint32_t COLOR_GREEN = carrier.leds.Color(255, 0, 0);
-const uint32_t COLOR_BLUE = carrier.leds.Color(0, 0, 255);
+// const uint32_t COLOR_GREEN = carrier.leds.Color(255, 0, 0);
+// const uint32_t COLOR_BLUE = carrier.leds.Color(0, 0, 255);
 const uint32_t NO_COLOR = carrier.leds.Color(0, 0, 0);
+uint32_t RAND_COLOR;
 
 const uint32_t COLOR_BLACK = 0x0000;
 const uint32_t COLOR_WHITE = 0xFFFF;
 uint32_t bkgd_color = COLOR_BLACK;
 uint32_t text_color = COLOR_WHITE;
   
-const float THRES_ACC = 1.;
+const float THRES_ACC = 0.5;
 const int THRES_GY = 100;
 const int RIGHT_LED = 1;
 const int LEFT_LED = 3;
 
 // do re mi
-int melody[] = {
+int do_re_mi[] = {
   NOTE_C4, NOTE_D4, NOTE_E4
+};
+
+int canon[] = {
+  NOTE_E5, NOTE_F5, NOTE_G5
 };
 
 /*
@@ -39,19 +44,24 @@ int melody[] = {
  */
 float ax, ay, az;
 float gx, gy, gz;
-
+float ax_avg, ay_avg, az_avg;
 float totvect[100] = {0};
 float totave[100] = {0};
 float xaccl[100] = {0};
 float yaccl[100] = {0};
 float zaccl[100] = {0};
 
-float ax_avg, ay_avg, az_avg;
+/*
+ * Light value
+ */
+int _, light;
+int THRES_LIGHT = 10;
+bool dark_mode = false;
 
 /*
  * Timer interval (seconds) and flag
  */
-const int INTERVAL = 30;
+const int INTERVAL = 10;
 int last_movement, current_time, sit_duration;
 bool should_move;
 
@@ -63,8 +73,19 @@ char main_msg[50];
 
 
 void setup() {
+  Serial.begin(9600);
+  while (!Serial);
+
   CARRIER_CASE = false;
-  carrier.begin();
+  if (!carrier.begin()){
+    Serial.println("Error initializing carrier!");  
+    while(1);  
+  };
+
+  if (!carrier.IMUmodule.begin()) {
+    Serial.println("Failed to initialize IMU!");
+    while (1);
+  }
 
   carrier.display.setRotation(0);
   carrier.display.fillScreen(bkgd_color);
@@ -88,22 +109,29 @@ void setup() {
 void loop() {
   // Update step and turning detection
   get_accl_update();
-  update_timer();
+  get_timer_update();
+  get_light_update();
   
   carrier.display.fillScreen(bkgd_color);
-  carrier.display.setCursor(50, 80);
+  carrier.display.setCursor(50, 70);
 
   // Update feedbacks
   if (should_move && !is_moving){
     // Buzz!
-    strcpy(main_msg, "MOVE UR BODY!");
+    strcpy(main_msg, "MOVE UR\n\n      BODY!!");
     carrier.display.println(main_msg);
-    play_melody('R');
+    light_alarm(true);
+    // Only play melody when it's not dark mode
+    if(!dark_mode){
+      play_melody('A');
+    }
   } else {
     strcpy(main_msg, "Sitting...");
     carrier.display.println(main_msg);
+    light_alarm(false);
   }
   
+  carrier.display.setCursor(110, 160);
   carrier.display.println(sit_duration);
   delay(100);
 }
@@ -111,12 +139,12 @@ void loop() {
 /*
  * Update timer, check if we need to buzz
  */
-void update_timer(){
+void get_timer_update(){
   current_time = now();
   sit_duration  = current_time - last_movement;
 
-  if (sit_duration >= INTERVAL && !is_moving){
-    // Buzz!
+  // Should move?
+  if (sit_duration >= INTERVAL){
     should_move = true;
   } else {
     should_move = false;
@@ -124,39 +152,63 @@ void update_timer(){
 }
 
 /*
+ * Update ambient light, check if we need to switch mode
+ */
+void get_light_update(){
+  if(carrier.Light.colorAvailable()){
+    carrier.Light.readColor(_, _, _, light);
+    Serial.println(light);
+
+    // Switch dark mode ON/OFF accordingly
+    if (light < THRES_LIGHT){
+      dark_mode = true;
+    } else {
+      dark_mode = false;
+    }
+
+  } else {
+    // Serial.println("APDS9960 - Light (color) unavailable!");    
+  }
+}
+
+/*
  * Get accelerometer updates
  */
 void get_accl_update(){
-  /*
-   * Collect 100 samples
-   */
-  for (int a = 0; a < 100; a++){
-    carrier.IMUmodule.readAcceleration(ax, ay, az);
-    // carrier.IMUmodule.readGyroscope(gx, gy, gz);
-    xaccl[a] = ax;
-    yaccl[a] = ay;
-    zaccl[a] = az;
+  if(carrier.IMUmodule.accelerationAvailable()){
+    /*
+    * Collect 100 samples
+    */
+    for (int a = 0; a < 100; a++){
+      carrier.IMUmodule.readAcceleration(ax, ay, az);
+      // carrier.IMUmodule.readGyroscope(gx, gy, gz);
+      xaccl[a] = ax;
+      yaccl[a] = ay;
+      zaccl[a] = az;
 
-    /* 
-     * Get the total acceleration vector by taking the square root of X, Y, and Z-axis values (of the accelerometer)
-     * then calculate the average of the maximum and minimum acceleration vector values
-     */
-    totvect[a] = sqrt(((xaccl[a] - ax_avg) * (xaccl[a] - ax_avg)) + ((yaccl[a] - ay_avg) * (yaccl[a] - ay_avg)) + ((zaccl[a] - az_avg) * (zaccl[a] - az_avg)));
-    totave[a] = (totvect[a] + totvect[a - 1]) / 2 ;
-    Serial.print("totave[a]\t");
-    Serial.println(totave[a]);
-    
-    // Check if update step according to threshold
-    // If acceleration vector greater than the threshold & flag is down, increase the step count and raise the flag
-    if (totave[a] > THRES_ACC && is_moving == false){
-      is_moving = true;
-      last_movement = current_time;
+      /* 
+      * Get the total acceleration vector by taking the square root of X, Y, and Z-axis values (of the accelerometer)
+      * then calculate the average of the maximum and minimum acceleration vector values
+      */
+      totvect[a] = sqrt(((xaccl[a] - ax_avg) * (xaccl[a] - ax_avg)) + ((yaccl[a] - ay_avg) * (yaccl[a] - ay_avg)) + ((zaccl[a] - az_avg) * (zaccl[a] - az_avg)));
+      totave[a] = (totvect[a] + totvect[a - 1]) / 2 ;
+      // Serial.print("totave[a]\t");
+      // Serial.println(totave[a]);
+      
+      // Check if update step according to threshold
+      // If acceleration vector greater than the threshold & flag is down, increase the step count and raise the flag
+      if (totave[a] > THRES_ACC && is_moving == false){
+        is_moving = true;
+        last_movement = current_time;
+      }
+      // If less than the threshold & flag is up, increase the step count and raise the flag
+      if (totave[a] < THRES_ACC && is_moving == true) {
+        is_moving = false;
+      }
     }
-    // If less than the threshold & flag is up, increase the step count and raise the flag
-    if (totave[a] < THRES_ACC && is_moving == true) {
-      is_moving = false;
-    }
-    
+  } else {
+    Serial.println("IMU Unavailable!");
+    while(1);
   }
 }
 
@@ -204,13 +256,20 @@ void play_melody(char dir){
 
   if (dir == 'R'){
     for (int note = 0; note < 3; note++){
-      carrier.Buzzer.sound(melody[note]);
+      carrier.Buzzer.sound(do_re_mi[note]);
+      delay(note_duration);
+      carrier.Buzzer.noSound();
+    }
+  } else if (dir == 'L') {
+    for (int note = 2; note > -1; note--){
+      carrier.Buzzer.sound(do_re_mi[note]);
       delay(note_duration);
       carrier.Buzzer.noSound();
     }
   } else {
-    for (int note = 2; note > -1; note--){
-      carrier.Buzzer.sound(melody[note]);
+    // Canon?
+    for (int note = 0; note < 3; note++){
+      carrier.Buzzer.sound(canon[note]);
       delay(note_duration);
       carrier.Buzzer.noSound();
     }
@@ -218,13 +277,33 @@ void play_melody(char dir){
 }
 
 /*
+ * Turn LED light alarm ON/OFF
+ */
+void light_alarm(bool on){
+  if(on){
+    // randomSeed(analogRead(0));
+    int rand_pin = int(random(5));
+    int r = int(random(256));
+    int g = int(random(256));
+    int b = int(random(256));
+
+    RAND_COLOR = carrier.leds.Color(r, g, b);
+    carrier.leds.setPixelColor(rand_pin, RAND_COLOR);
+  } else {
+    carrier.leds.fill(NO_COLOR, 0, 5);
+  }
+
+  carrier.leds.show();
+}
+
+/*
  * Display text
  */
-void display_text(char msg[]){
-  carrier.display.fillScreen(bkgd_color);
-  carrier.display.setCursor(50, 80);
-  carrier.display.setTextColor(text_color);
-  carrier.display.setTextSize(3);
-  carrier.display.println(msg);
-  delay(100);
-}
+// void display_text(char msg[]){
+//   carrier.display.fillScreen(bkgd_color);
+//   carrier.display.setCursor(50, 80);
+//   carrier.display.setTextColor(text_color);
+//   carrier.display.setTextSize(3);
+//   carrier.display.println(msg);
+//   delay(100);
+// }
