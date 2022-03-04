@@ -138,6 +138,17 @@ Arduino code updated in [this directory](./sitting_is_killing_you/).
 
 As stated before, this project is a wearable belt charm designed to tell people to stand up and move around once in a while, because sitting is killing you. The final product came out as a "wearable" alarm that reads in body movements and environment light ambient, and uses light + sound as the feedback media.
 
+#### **Design Update**
+
+I made a few updates to the original design of the device. A major update would be changing the vibrating motor to LED lights. This is mainly because I want the device to have a "silent alarm" that would be more compatible with a newly added "dark mode" design. Judging from real life experiences, when you're working alone at night in a quite environment, a sudden alarm sound can be quite scary. We don't want the users to have any near-heart attack experiences, so a silent alarm had to be in place.
+
+The light sensor would read in ambient light to determin if the user is in a dark or bright environment. When it's bright, the feedback media is the usual light + sound combination. When it's dark, dark mode is automatically activated, and we use light as the only feedback medium. 
+
+If the user has a certain perferred mode, they could also turn off the auto mode-switching function through the upper-left touch button, and manually switch modes through the upper-right touch button.
+
+Alarms in different modes are demonstrated in the videos above.
+
+
 #### **Hardware**
 
 Hardware-wise, I used the Arduino Oplà board as the minicontroller. The built-in IMU, light sensor and touch sensors in its IoT carrier saved a lot of wiring hazzle in the hardware process.
@@ -146,7 +157,7 @@ Something worth noticing is that this project gave me a clearer idea of the impo
 
 #### **Software**
 
-**Code Structure**
+**_Code Structure_**
 
 ```arduino
 void setup() {
@@ -184,7 +195,7 @@ void loop() {
 }
 ```
 
-**Accelerometer >>> Movement**
+**_Accelerometer >>> Movement_**
 
 Similar to the step counter, I used the accelerometer to caputure movements from the user, in order to determine whether the user is sitting or standing. 
 
@@ -193,7 +204,6 @@ Similar to the step counter, I used the accelerometer to caputure movements from
 ![The acceleration vector formula](./img/acc_vector.png)
 
 Although, I did fix a bug from previous checkpoints in the computation process, that led to much more reasonable vector value ranges. After the bug fix, the final threshold of movement detection is set t be **1.0**.
-
 
 
 ### References
