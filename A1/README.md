@@ -3,6 +3,11 @@
 
 > [PROMPT LINK](https://docs.google.com/document/d/1Xl1YSyWRIVDWvTWeaNu3gSM3fZbOMw0mk-BN9TmgWDI/edit?usp=sharing)
 
+> #### **JUMP TO:**
+> * [WEEK 1](#week-1)
+> * [WEEK 2](#week-2)
+> * [WEEK 3 & 4](#week-3--4)
+
 
 ## Week 1
 
@@ -18,12 +23,12 @@ The device has a accelerometer detecting sitting to standing movements, which ke
 
 ### System Schematics
 
-![System Schematics](./A1_schematics.png)
+![System Schematics](./img/A1_schematics.png)
 
 
 ### Sketch
 
-![Sketch](./A1_w1_sketch.png)
+![Sketch](./img/A1_w1_sketch.png)
 
 
 ### Test - IMU & LED / Screen Feedback Device
@@ -91,7 +96,7 @@ When a *RIGHT* turn is detected, the LED on the right blinks, and the board buzz
 
 ### A little accident
 
-![Micro-usb power port disconnected](./A1_c2_glitch.jpeg)
+![Micro-usb power port disconnected](./img/A1_c2_glitch.jpeg)
 
 While building the wearable prototype onto a belt, I accidentally dropped the board. It hit the floor and then became not responsive to power supply. After a quick check I found out that the metal pin connecting the micro-usb port to the board got disconnected, as shown in the red circle, and that when they are pinched back together the power supply went through again.
 
@@ -106,5 +111,17 @@ I'll need to find out what's the best way to fix this without (further) hurting 
 * Acceleration detection code used in this project is inspired by [this blog post](https://circuitdigest.com/microcontroller-projects/diy-arduino-pedometer-counting-steps-using-arduino-and-accelerometer) by Ashish Choudhary.
 
 
+<br>
+
+## Week 3 & 4
+
+### Video documentations
+
+#### **Testing light/dark mode controlled byambient light sensor**
 
 
+
+#### **Functional Demo**
+
+
+### Written Report
