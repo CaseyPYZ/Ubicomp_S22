@@ -22,8 +22,9 @@ uint32_t RAND_COLOR;
 
 const uint32_t COLOR_BLACK = 0x0000;
 const uint32_t COLOR_WHITE = 0xFFFF;
-uint32_t bkgd_color = COLOR_BLACK;
-uint32_t text_color = COLOR_WHITE;
+const uint32_t COLOR_GRAY = 0xEEEE;
+uint32_t bkgd_color = COLOR_GRAY;
+uint32_t text_color = COLOR_BLACK;
   
 const float THRES_ACC = 0.5;
 const int THRES_GY = 100;
@@ -110,9 +111,10 @@ void loop() {
   // Update step and turning detection
   get_accl_update();
   get_timer_update();
-  get_light_update();
+  get_light_update();  
   
   carrier.display.fillScreen(bkgd_color);
+  carrier.display.setTextColor(text_color);
   carrier.display.setCursor(50, 70);
 
   // Update feedbacks
@@ -159,11 +161,15 @@ void get_light_update(){
     carrier.Light.readColor(_, _, _, light);
     Serial.println(light);
 
-    // Switch dark mode ON/OFF accordingly
+    // Switch dark mode ON/OFF accordingly & update color scheme
     if (light < THRES_LIGHT){
       dark_mode = true;
+      bkgd_color = COLOR_BLACK;
+      text_color = COLOR_WHITE;
     } else {
       dark_mode = false;
+      bkgd_color = COLOR_GRAY;
+      text_color = COLOR_BLACK;
     }
 
   } else {
