@@ -127,4 +127,8 @@ https://user-images.githubusercontent.com/37056925/156705747-56f23339-ec4d-488f-
 https://user-images.githubusercontent.com/37056925/156705759-9145530c-cee0-4f00-b340-3dd8da480818.mp4
 
 
+### Arduino Code
+
+Arduino code updated in [this directory](./sitting_is_killing_you/).
+
 ### Written Report
