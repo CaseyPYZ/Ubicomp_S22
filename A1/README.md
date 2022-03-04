@@ -119,9 +119,12 @@ I'll need to find out what's the best way to fix this without (further) hurting 
 
 #### **Testing light/dark mode controlled byambient light sensor**
 
+https://user-images.githubusercontent.com/37056925/156705747-56f23339-ec4d-488f-86bb-2f1ca8d72d23.mp4
 
 
 #### **Functional Demo**
+
+https://user-images.githubusercontent.com/37056925/156705759-9145530c-cee0-4f00-b340-3dd8da480818.mp4
 
 
 ### Written Report
