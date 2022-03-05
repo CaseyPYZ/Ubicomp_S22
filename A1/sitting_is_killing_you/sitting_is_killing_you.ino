@@ -57,6 +57,7 @@ float zaccl[100] = {0};
  */
 int _, light;
 int THRES_LIGHT = 30;
+bool auto_mode_switch = true;
 bool dark_mode = false;
 
 /*
@@ -70,7 +71,7 @@ bool should_move;
  * The is_moving flag
  */
 bool is_moving;
-char main_msg[50];
+char main_msg[50], temp_msg[50];
 
 
 void setup() {
@@ -111,7 +112,9 @@ void loop() {
   // Update step and turning detection
   get_accl_update();
   get_timer_update();
-  get_light_update();  
+  get_button_update();
+  get_light_update();
+  update_color_mode();
   
   carrier.display.fillScreen(bkgd_color);
   carrier.display.setTextColor(text_color);
@@ -154,24 +157,55 @@ void get_timer_update(){
 }
 
 /*
+ * Update colors according to light/dark mode if needed
+ */
+void update_color_mode(){
+  if (dark_mode){
+    bkgd_color = COLOR_BLACK;
+    text_color = COLOR_WHITE;
+  } else {
+    bkgd_color = COLOR_GRAY;
+    text_color = COLOR_BLACK;
+  }
+}
+
+/*
+ * Update buttons
+ */
+void get_button_update(){
+  carrier.Buttons.update();
+  
+  // Button 01 - turn auto mode switch ON/OFF
+  if (carrier.Buttons.onTouchDown(TOUCH1)){
+    auto_mode_switch = !auto_mode_switch;
+    if (auto_mode_switch){
+      flash_text("AUTO MODE\n\n     ON");
+    } else {
+      flash_text("AUTO MODE\n\n     OFF");
+    }
+  }
+
+  // Button 03 - mannually switch light/dark mode
+  if (carrier.Buttons.onTouchDown(TOUCH3)){
+    dark_mode = !dark_mode;
+  }
+}
+
+/*
  * Update ambient light, check if we need to switch mode
  */
 void get_light_update(){
-  if(carrier.Light.colorAvailable()){
+  // Only read light & auto change mode if auto_mode_switch is ON
+  if(carrier.Light.colorAvailable() && auto_mode_switch){
     carrier.Light.readColor(_, _, _, light);
     Serial.println(light);
 
     // Switch dark mode ON/OFF accordingly & update color scheme
     if (light < THRES_LIGHT){
       dark_mode = true;
-      bkgd_color = COLOR_BLACK;
-      text_color = COLOR_WHITE;
     } else {
       dark_mode = false;
-      bkgd_color = COLOR_GRAY;
-      text_color = COLOR_BLACK;
     }
-
   } else {
     // Serial.println("APDS9960 - Light (color) unavailable!");    
   }
@@ -231,7 +265,6 @@ void calibrate() {
   float zval[100] = {0};
   
   for (int i = 0; i < 100; i++) {
-    // carrier.IMUmodule.readGyroscope(x, y, z);
     carrier.IMUmodule.readAcceleration(x, y, z);
     xval[i] = x;
     yval[i] = y;
@@ -287,7 +320,6 @@ void play_melody(char dir){
  */
 void light_alarm(bool on){
   if(on){
-    // randomSeed(analogRead(0));
     int rand_pin = int(random(5));
     int r = int(random(256));
     int g = int(random(256));
@@ -303,13 +335,17 @@ void light_alarm(bool on){
 }
 
 /*
- * Display text
+ * Flash text message
  */
-// void display_text(char msg[]){
-//   carrier.display.fillScreen(bkgd_color);
-//   carrier.display.setCursor(50, 80);
-//   carrier.display.setTextColor(text_color);
-//   carrier.display.setTextSize(3);
-//   carrier.display.println(msg);
-//   delay(100);
-// }
+void flash_text(char msg[]){
+  strcpy(temp_msg, main_msg);
+  strcpy(main_msg, msg);
+  carrier.display.fillScreen(bkgd_color);
+  carrier.display.setTextColor(text_color);
+  carrier.display.setCursor(50, 70);
+  carrier.display.println(main_msg);
+
+  delay(200);
+
+  strcpy(main_msg, temp_msg);
+}

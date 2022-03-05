@@ -151,7 +151,7 @@ I made a few updates to the original design of the device. A major update would 
 
 The light sensor would read in ambient light to determin if the user is in a dark or bright environment. When it's bright, the feedback media is the usual light + sound combination. When it's dark, dark mode is automatically activated, and we use light as the only feedback medium. 
 
-If the user has a certain perferred mode, they could also turn off the auto mode-switching function through the upper-left touch button, and manually switch modes through the upper-right touch button.
+If the user has a certain perferred mode, they could also turn off the auto mode-switching function through the upper-left capacitive button, and manually switch modes through the upper-right capacitive button.
 
 Alarms in different modes are demonstrated in the videos above.
 
@@ -194,7 +194,9 @@ void loop() {
     // Update step and turning detection
     get_accl_update();
     get_timer_update();
-    get_light_update();  
+    get_button_update();
+    get_light_update();
+    update_color_mode();
 
     ...
     
@@ -231,7 +233,7 @@ The system still faces many challenges and limitations. One thing that stands ou
 
 First, the alarm timer is currently hard-coded in the program. It would make more sense if the user could set the timer interval through on-broard operations. 
 
-Secondly, while making standing up the only way the alarm could be turned off is a design decision, I still have doubts on whether having a general ON/OFF button to the entire system would increase its usability or weaken the alarming effect. These are all limitations that could be addressed if this device is taken into further iterations.  
+Secondly, while making standing up the only way the alarm could be turned off is a design decision, I still have doubts on whether having a general ON/OFF switch to the entire system would increase its usability or weaken the alarming effect. These are all limitations that could be addressed if this device is taken into further iterations.  
 
 <br>
 
