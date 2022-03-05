@@ -169,6 +169,14 @@ Something worth noticing is that this project gave me a clearer idea of the impo
 
 _Code Structure_
 
+The system's program works around the alternation of a few key flag variables: 
+
+* `should_move` - if the user's "sitting timer" is up
+* `is_moving` - if the user is currently moving (accelerometer data)
+* `dark_mode` - if the dark mode is on
+
+The code structure is organized as the following:
+
 ```arduino
 void setup() {
     /*
