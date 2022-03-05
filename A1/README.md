@@ -123,22 +123,27 @@ https://user-images.githubusercontent.com/37056925/156705747-56f23339-ec4d-488f-
 
 https://user-images.githubusercontent.com/37056925/156705759-9145530c-cee0-4f00-b340-3dd8da480818.mp4
 
+<br>
 
 ### Collected Data
 
 Collected serial [accelerometer data](./sitting_is_killing_you/sitting_alarm_data.csv) with pyserial library.
 
+<br>
 
 ### Arduino Code
 
 Arduino code updated in [this directory](./sitting_is_killing_you/).
 
+<br>
 
 ### Written Report
 
 As stated before, this project is a wearable belt charm designed to tell people to stand up and move around once in a while, because sitting is killing you. The final product came out as a "wearable" alarm that reads in body movements and environment light ambient, and uses light + sound as the feedback media.
 
-#### **Design Update**
+<br>
+
+#### **_Design Update_**
 
 ![Updated Schematics](./img/A1_schematics_updated.png)
 
@@ -150,16 +155,19 @@ If the user has a certain perferred mode, they could also turn off the auto mode
 
 Alarms in different modes are demonstrated in the videos above.
 
+<br>
 
-#### **Hardware**
+#### **_Hardware_**
 
 Hardware-wise, I used the Arduino Oplà board as the minicontroller. The built-in IMU, light sensor and touch sensors in its IoT carrier saved a lot of wiring hazzle in the hardware process.
 
 Something worth noticing is that this project gave me a clearer idea of the importance to calibrate positional sensors when the device is activated. This helps positional sensors to read in data that are consistent with the thresholds set in the program.
 
-#### **Software**
+<br>
 
-**_Code Structure_**
+#### **_Software_**
+
+_Code Structure_
 
 ```arduino
 void setup() {
@@ -197,7 +205,7 @@ void loop() {
 }
 ```
 
-**_Accelerometer >>> Movement_**
+_Accelerometer >>> Movement_
 
 Similar to the step counter, I used the accelerometer to caputure movements from the user, in order to determine whether the user is sitting or standing. 
 
@@ -207,6 +215,17 @@ Similar to the step counter, I used the accelerometer to caputure movements from
 
 Although, I did fix a bug from previous checkpoints in the computation process, that led to much more reasonable vector value ranges. After the bug fix, the final threshold of movement detection is set t be **1.0**.
 
+<br>
+
+#### **_Challenges & Limitations_**
+
+The system still faces many challenges and limitations. One thing that stands out to me is that the device would benefit from a more complex control logic.
+
+First, the alarm timer is currently hard-coded in the program. It would make more sense if the user could set the timer interval through on-broard operations. 
+
+Secondly, while making standing up the only way the alarm could be turned off is a design decision, I still have doubts on whether having a general ON/OFF button to the entire system would increase its usability or weaken the alarming effect. These are all limitations that could be addressed if this device is taken into further iterations.  
+
+<br>
 
 ### References
 
