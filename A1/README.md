@@ -156,6 +156,11 @@ I made a few updates to the original design of the device. A major update would 
 
 The light sensor would read in ambient light to determin if the user is in a dark or bright environment. When it's bright, the feedback media is the usual light + sound combination. When it's dark, dark mode is automatically activated, and we use light as the only feedback medium. 
 
+Feedback media in different mode:
+
+* **LIGHT MODE - Sound + Light**
+* **DARK MODE - Light**
+
 If the user has a certain perferred mode, they could also turn off the auto mode-switching function through the upper-left capacitive button, and manually switch modes through the upper-right capacitive button.
 
 Alarms in different modes are demonstrated in the videos above.
