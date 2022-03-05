@@ -114,9 +114,14 @@ I'll need to find out what's the best way to fix this without (further) hurting 
 
 ### Video documentations
 
-#### **Testing light/dark mode controlled byambient light sensor**
+#### **Testing auto light/dark mode controlled byambient light sensor**
 
 https://user-images.githubusercontent.com/37056925/156705747-56f23339-ec4d-488f-86bb-2f1ca8d72d23.mp4
+
+
+#### **Testing switching `auto_model_switch` ON/OFF & mannually changing mode with capacitive buttons**
+
+https://user-images.githubusercontent.com/37056925/156864776-6ab094a2-00bb-4a7b-aab4-83f942fd4b61.mp4
 
 
 #### **Functional Demo**
